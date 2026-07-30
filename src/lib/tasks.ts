@@ -1,10 +1,11 @@
 // src/lib/tasks.ts
+import {getDb} from './db';
 
 export type TaskStatus = 'Todo' | 'In-Progress' | 'Complete';
 
 export interface TaskInput {
   title: string;
-  description?: string;
+  description?: string | null;
   due_date: string;
   topic: string;
   status?: TaskStatus;
@@ -18,23 +19,159 @@ export interface Task extends TaskInput {
   updated_at: string;
 }
 
-export function createTask(data: TaskInput) {
+export interface TaskWithOverdue extends Task{
+    is_overdue: boolean;
+}
+
+const VALID_STATUSES: TaskStatus[] = ['Todo', 'In-Progress', 'Complete'];
+const SORTABLE_COLUMNS = ['topic', 'status', 'due_date'] as const;
+type SortableColumn = (typeof SORTABLE_COLUMNS)[number];
+
+function isValidStatus(value: unknown):value is TaskStatus{
+    return typeof value === 'string' && VALID_STATUSES.includes(value as TaskStatus);
+}
+function isSortableColumn(value: unknown):value is SortableColumn{
+    return typeof value === 'string' && SORTABLE_COLUMNS.includes(value as SortableColumn);
+}
+
+
+export function isOverdue(task: Pick<Task, 'due_date' | 'status'>, now:Date = new Date()): boolean {
+  return new Date(task.due_date) < now && task.status !== 'Complete';
+}
+
+function attachOverdue(task:Task):TaskWithOverdue{
+    return {...task, is_overdue: isOverdue(task)};
+
+}
+
+export function createTask(data: TaskInput): TaskWithOverdue {
   // TODO: validate + insert into SQLite
+    if(!data.title || !data.title.trim()){
+        throw new Error('Title is required');
+    }
+
+    if(!data.due_date){
+        throw new Error('Due Date is required');
+    }
+    if(!data.topic || !data.topic.trim()){
+        throw new Error('Topic is required');
+    }
+    if (data.status && !isValidStatus(data.status)) {
+        throw new Error(`Invalid status: ${data.status}`);
+    }
+
+    const db = getDb();
+    const query = db.prepare(`INSERT INTO tasks (title, description, due_date, topic, status)
+        VALUES (@title, @description, @due_date, @topic, @status)`);
+    
+    const result = query.run({
+        title: data.title.trim(),
+        description: data.description ?? null,
+        due_date: data.due_date,
+        topic: data.topic.trim(),
+        status: data.status ?? 'Todo',
+        });
+
+    const created = getTaskById(result.lastInsertRowid as number);
+    if (!created) {
+        throw new Error('Failed to load task after creation');
+    }
+    
+    return created;
+
 }
 
-export function updateTask(id: number, data: Partial<TaskInput>) {
-  // TODO: partial update
+// getTaskById — internal helper, also useful for tests
+export function getTaskById(id: number): TaskWithOverdue | null {
+  const db = getDb();
+  const row = db.prepare('SELECT * FROM tasks WHERE id = ?').get(id) as Task | undefined;
+  return row ? attachOverdue(row) : null;
 }
 
-export function archiveTask(id: number) {
-  // TODO: set archived_at
+export function updateTask(id: number, data: Partial<TaskInput>): TaskWithOverdue {
+  const existing = getTaskById(id);
+  if (!existing) {
+    throw new Error(`Task ${id} not found`);
+  }
+  if (data.status !== undefined && !isValidStatus(data.status)) {
+    throw new Error(`Invalid status: ${data.status}`);
+  }
+ 
+  const db = getDb();
+  const stmt = db.prepare(`
+    UPDATE tasks
+    SET title = @title,
+        description = @description,
+        due_date = @due_date,
+        topic = @topic,
+        status = @status,
+        updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now')
+    WHERE id = @id
+  `);
+ 
+  stmt.run({
+    id,
+    title: data.title !== undefined ? data.title.trim() : existing.title,
+    description: data.description !== undefined ? data.description : existing.description,
+    due_date: data.due_date !== undefined ? data.due_date : existing.due_date,
+    topic: data.topic !== undefined ? data.topic.trim() : existing.topic,
+    status: data.status !== undefined ? data.status : existing.status,
+  });
+ 
+  const updated = getTaskById(id);
+  if (!updated) {
+    throw new Error('Failed to load task after update');
+  }
+  return updated;
 }
 
-export function listTasks(opts: { sort?: string; includeArchived?: boolean }) {
-  // TODO: query + sort
-  return [];
+// archiveTask — never deletes. Sets archived_at on the same row.
+
+export function archiveTask(id: number): TaskWithOverdue {
+  const existing = getTaskById(id);
+  if (!existing) {
+    throw new Error(`Task ${id} not found`);
+  }
+ 
+  const db = getDb();
+  db.prepare(`
+    UPDATE tasks
+    SET archived_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now'),
+        updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now')
+    WHERE id = ?
+  `).run(id);
+ 
+  const archived = getTaskById(id);
+  if (!archived) {
+    throw new Error('Failed to load task after archiving');
+  }
+  return archived;
 }
 
-export function isOverdue(task: Task): boolean {
-  return new Date(task.due_date) < new Date() && task.status !== 'Complete';
+// listTasks — filter by archived state, sort by a whitelisted column
+
+export interface ListTasksOptions {
+  sort?: string;
+  direction?: 'asc' | 'desc';
+  includeArchived?: boolean;
+}
+ 
+export function listTasks(opts: ListTasksOptions = {}): TaskWithOverdue[] {
+  const db = getDb();
+ 
+  const sortColumn: SortableColumn = isSortableColumn(opts.sort) ? opts.sort : 'due_date';
+  const direction = opts.direction === 'desc' ? 'DESC' : 'ASC';
+ 
+  const whereClause = opts.includeArchived ? '' : 'WHERE archived_at IS NULL';
+ 
+  // sortColumn/direction come only from the whitelist above, never raw
+  // user input, so this string build is safe from SQL injection.
+  const query = `
+    SELECT * FROM tasks
+    ${whereClause}
+    ORDER BY ${sortColumn} ${direction}
+  `;
+ 
+  const rows = db.prepare(query).all() as Task[];
+  return rows.map(attachOverdue);
 }

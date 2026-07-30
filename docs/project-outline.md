@@ -123,3 +123,127 @@ tick/
 5. Wire API routes to real logic
 6. Write first real tests (`isOverdue`, archive behavior)
 7. Build frontend list view + form
+
+
+# Tick — Project Summary
+
+**A local-first to-do app.** Next.js (App Router, TypeScript), SQLite via
+better-sqlite3, Vitest, CSS Modules. No auth, single user, runs entirely on
+the user's own machine.
+
+---
+
+## 1. Project Structure
+
+```
+tick/
+├── src/
+│   ├── app/
+│   │   ├── page.tsx                          # active task list — NOT YET BUILT
+│   │   ├── archive/page.tsx                  # archived tasks page — NOT YET BUILT
+│   │   ├── layout.tsx, globals.css
+│   │   └── api/
+│   │       └── tasks/
+│   │           ├── route.ts                  # GET (list+sort+filter), POST (create) ✅
+│   │           └── [id]/
+│   │               ├── route.ts              # PATCH (edit) ✅
+│   │               └── archive/route.ts      # PATCH (archive) ✅
+│   │
+│   ├── lib/
+│   │   ├── db.ts                             # SQLite connection singleton ✅
+│   │   ├── schema.sql                        # tasks table definition ✅
+│   │   ├── migrate.ts                        # applies schema.sql ✅
+│   │   └── tasks.ts                          # business logic — createTask,
+│   │                                          #   updateTask, archiveTask,
+│   │                                          #   listTasks, isOverdue ✅
+│   │
+│   ├── components/                           # NOT YET BUILT
+│   └── styles/                               # NOT YET BUILT
+│
+├── tests/
+│   └── tasks.test.ts                         # 7 tests, business logic layer ✅
+│
+├── docs/
+│   ├── third-party-code.md                   # ✅ (2 placeholders to fill in)
+│   ├── database-design.md                    # ✅ complete
+│   └── running-it.md                         # ✅ (2 placeholders to fill in)
+│
+├── ai-transcripts/
+│   └── 01-project-planning.md
+│
+└── data/todo.db                              # created by `npm run migrate`
+```
+
+---
+
+## 2. What's Implemented
+
+### Database layer ✅
+- Single `tasks` table: `title`, `description`, `due_date`, `topic`, `status`,
+  `archived_at`, `created_at`, `updated_at`
+- `status` constrained via `CHECK` to `Todo` / `In-Progress` / `Complete`
+- Archiving = nullable `archived_at` timestamp — no delete, no copy-table,
+  independent of `status`
+- Overdue is **never stored** — derived at read time from `due_date` + `status`
+- Indexes on `topic`, `status`, `due_date`, `archived_at`
+
+### Business logic (`lib/tasks.ts`) ✅
+- `createTask`, `updateTask` (partial updates), `archiveTask`, `listTasks`
+  (whitelisted sort column + archived filter), `isOverdue` (pure function)
+- All DB access parameterized, no Next.js dependency — testable in isolation
+
+### API layer ✅
+- `GET /api/tasks` — list, with `?sort=` and `?archived=` query params
+- `POST /api/tasks` — create
+- `PATCH /api/tasks/[id]` — edit
+- `PATCH /api/tasks/[id]/archive` — archive
+- Manually verified end-to-end via dev server (create → list → sort → update
+  → archive → filter → restart-persists)
+
+### Testing ✅
+- `tests/tasks.test.ts` — 7 tests against a throwaway SQLite file (never the
+  real `data/todo.db`), covering: task creation persists all 4 fields, edits
+  persist on reload, archiving removes from active list but stays retrievable,
+  sorting by topic/status/due_date, and the overdue rule (including the
+  Complete-task edge case)
+- Satisfies rubric minimum (3+ tests, deterministic, throwaway DB, single
+  documented command: `npm test`)
+
+### Documentation
+- `database-design.md` — ✅ complete, matches shipped schema
+- `third-party-code.md` — ✅ matches actual `package.json`; one dependency
+  (`babel-plugin-react-compiler`) needs a quick check for whether it's
+  actually wired up in `next.config.*` or should be removed
+- `running-it.md` — ✅ structurally complete (install → migrate → dev/build →
+  test); needs the real Node version and repo URL pasted in before submission
+
+---
+
+## 3. What's Next
+
+1. **Frontend — task list page** (`app/page.tsx`)
+   Fetch from `/api/tasks`, render active tasks, sort controls (topic/status/
+   due date), visible overdue flag (not a status).
+
+2. **Frontend — archive page** (`app/archive/page.tsx`)
+   Fetch with `?archived=true`, read-only or lightly editable view.
+
+3. **Frontend — create/edit form**
+   4 required fields, status dropdown limited to the 3 fixed values.
+
+4. **Components + CSS Modules**
+   `TaskList`, `TaskForm`, `TaskRow`, `SortControls`, styled with plain CSS
+   Modules (no Tailwind).
+
+5. **Documentation placeholders**
+   Fill in real Node version + repo URL in `running-it.md`; verify
+   `babel-plugin-react-compiler` entry in `third-party-code.md`.
+
+6. **Full clean-clone walkthrough**
+   Test `running-it.md` literally from a fresh clone before submission —
+   this is exactly what the functional walkthrough marking will do.
+
+7. **Commit hygiene check**
+   Confirm work is spread across enough distinct, well-described commits
+   (rubric wants 6+, spread over multiple sessions) — worth reviewing
+   `git log` before the deadline.

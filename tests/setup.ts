@@ -1,5 +1,6 @@
 // tests/setup.ts
 import { beforeEach, afterEach } from 'vitest';
+import '@testing-library/jest-dom';
 import fs from 'fs';
 import path from 'path';
 

@@ -1,0 +1,146 @@
+/* src/styles/Calendar.module.css */
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.heading {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.navButton {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  width: 32px;
+  height: 32px;
+  font-size: 1.1rem;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navButton:hover {
+  background: var(--todo-bg);
+}
+
+.todayButton {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.35rem 0.9rem;
+  font-size: 0.8rem;
+  color: var(--ink);
+}
+
+.todayButton:hover {
+  background: var(--todo-bg);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.weekdayLabel {
+  font-size: 0.75rem;
+  color: var(--muted);
+  text-align: center;
+  padding-bottom: 0.4rem;
+  font-weight: 600;
+}
+
+.cell {
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  padding: 0.4rem;
+  min-height: 84px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  box-shadow: 0 1px 2px rgba(74, 42, 55, 0.06);
+}
+
+.cellMuted {
+  opacity: 0.45;
+}
+
+.cellToday {
+  outline: 2px solid var(--in-progress-ink);
+  outline-offset: -2px;
+}
+
+.dayNumber {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.taskChips {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.chip {
+  font-size: 0.65rem;
+  padding: 0.1rem 0.35rem;
+  border-radius: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chip-Todo {
+  background: var(--todo-bg);
+  color: var(--todo-ink);
+}
+
+.chip-In-Progress {
+  background: var(--in-progress-bg);
+  color: var(--in-progress-ink);
+}
+
+.chip-Complete {
+  background: var(--complete-bg);
+  color: var(--complete-ink);
+}
+
+.chipOverdue {
+  background: var(--overdue-bg);
+  color: var(--overdue);
+}
+
+.chipMore {
+  font-size: 0.65rem;
+  color: var(--muted);
+}
+
+.empty {
+  color: var(--muted);
+  font-size: 0.9rem;
+  padding: 2rem 0;
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .cell {
+    min-height: 60px;
+  }
+
+  .chip {
+    display: none;
+  }
+}

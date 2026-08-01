@@ -175,3 +175,55 @@ export function listTasks(opts: ListTasksOptions = {}): TaskWithOverdue[] {
   const rows = db.prepare(query).all() as Task[];
   return rows.map(attachOverdue);
 }
+
+//Stats
+
+export interface TaskStats {
+  totalActive: number;
+  totalArchived: number;
+  byStatus: Record<TaskStatus, number>;
+  overdueCount: number;
+  completionRate: number; // percentage of active tasks that are Complete
+  byTopic: { topic: string; count: number }[];
+}
+ 
+export function getStats(): TaskStats {
+  const db = getDb();
+ 
+  const activeTasks = listTasks({ includeArchived: false });
+  const archivedCountRow = db
+    .prepare('SELECT COUNT(*) as count FROM tasks WHERE archived_at IS NOT NULL')
+    .get() as { count: number };
+ 
+  const byStatus: Record<TaskStatus, number> = {
+    Todo: 0,
+    'In-Progress': 0,
+    Complete: 0,
+  };
+  for (const task of activeTasks) {
+    byStatus[task.status] += 1;
+  }
+ 
+  const overdueCount = activeTasks.filter((t) => t.is_overdue).length;
+ 
+  const completionRate =
+    activeTasks.length === 0
+      ? 0
+      : Math.round((byStatus.Complete / activeTasks.length) * 100);
+ 
+  const topicRows = db
+    .prepare(
+      `SELECT topic, COUNT(*) as count FROM tasks WHERE archived_at IS NULL GROUP BY topic ORDER BY count DESC`
+    )
+    .all() as { topic: string; count: number }[];
+ 
+  return {
+    totalActive: activeTasks.length,
+    totalArchived: archivedCountRow.count,
+    byStatus,
+    overdueCount,
+    completionRate,
+    byTopic: topicRows,
+  };
+}
+ 

@@ -27,6 +27,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Link href="/archive" className={styles.navLink}>
                 Archive
               </Link>
+              <Link href="/calendar" className={styles.navLink}>
+                Calendar
+              </Link>
+              <Link href="/stats" className={styles.navLink}>
+                Statistics
+              </Link>
             </nav>
           </aside>
           <main className={styles.main}>{children}</main>

@@ -1,0 +1,36 @@
+/* src/styles/TaskList.module.css */
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.newTaskButton {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border: none;
+  border-radius: 999px;
+  padding: 0.5rem 1.1rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+}
+
+.errorBanner {
+  background: var(--overdue-bg);
+  color: var(--overdue);
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 0.9rem;
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.empty {
+  color: var(--muted);
+  font-size: 0.9rem;
+  padding: 2rem 0;
+  text-align: center;
+}

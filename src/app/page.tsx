@@ -1,8 +1,7 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+// src/app/page.tsx
 
-export default function Home() {
-  return (
- <p>Hi</p>
-  );
+import { TaskList } from '@/components/TaskList';
+
+export default function HomePage() {
+  return <TaskList archived={false} />;
 }

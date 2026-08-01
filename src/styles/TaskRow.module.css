@@ -1,0 +1,117 @@
+/* src/styles/TaskRow.module.css */
+
+.card {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.1rem 1.25rem;
+  background: var(--surface);
+  border-radius: var(--radius);
+  margin-bottom: 0.85rem;
+  box-shadow: 0 1px 3px rgba(122, 46, 77, 0.08);
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+}
+
+.titleLine {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.title {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.overdueFlag {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--overdue);
+  background: var(--overdue-bg);
+  border-radius: 999px;
+  padding: 0.15rem 0.55rem;
+}
+
+.description {
+  margin: 0.4rem 0 0;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.meta {
+  margin-top: 0.55rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.metaDivider {
+  margin: 0 0.4rem;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.statusSelect {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.35rem 0.7rem;
+  border: none;
+  border-radius: 999px;
+  appearance: none;
+  -webkit-appearance: none;
+  text-align: center;
+  cursor: pointer;
+}
+
+.status-Todo {
+  background: var(--todo-bg);
+  color: var(--todo-ink);
+}
+
+.status-In-Progress {
+  background: var(--in-progress-bg);
+  color: var(--in-progress-ink);
+}
+
+.status-Complete {
+  background: var(--complete-bg);
+  color: var(--complete-ink);
+}
+
+.iconButton {
+  background: none;
+  border: none;
+  font-size: 0.78rem;
+  color: var(--muted);
+  padding: 0.3rem 0.4rem;
+  border-radius: var(--radius-sm);
+}
+
+.iconButton:hover {
+  background: var(--todo-bg);
+  color: var(--todo-ink);
+}
+
+@media (max-width: 600px) {
+  .card {
+    flex-direction: column;
+  }
+
+  .actions {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+}

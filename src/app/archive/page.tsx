@@ -1,7 +1,7 @@
+// src/app/archive/page.tsx
+
+import { TaskList } from '@/components/TaskList';
+
 export default function ArchivePage() {
-  return (
-    <div>
-      <h1>Archived Tasks</h1>
-    </div>
-  );
+  return <TaskList archived={true} />;
 }

@@ -57,7 +57,7 @@ describe('createTask', () => {
     expect(reloaded).not.toBeNull();
     expect(reloaded!.title).toBe('Buy groceries');
     expect(reloaded!.description).toBe('Milk, eggs, bread');
-    expect(reloaded!.due_date).toBe('2026-12-01');
+    expect(reloaded!.due_date).toBe('2026-12-01T13:00:00');
     expect(reloaded!.topic).toBe('Errands');
     expect(reloaded!.status).toBe('Todo'); // default status
   });
@@ -80,7 +80,7 @@ describe('updateTask', () => {
     expect(reloaded!.title).toBe('Updated title');
     expect(reloaded!.status).toBe('In-Progress');
     // Untouched fields should be unaffected by a partial update
-    expect(reloaded!.due_date).toBe('2026-11-01');
+    expect(reloaded!.due_date).toBe('2026-11-01T13:00:00');
     expect(reloaded!.topic).toBe('Work');
   });
 });
@@ -127,7 +127,11 @@ describe('listTasks sorting', () => {
 
   it('sorts by due_date ascending', () => {
     const result = listTasks({ sort: 'due_date' });
-    expect(result.map((t) => t.due_date)).toEqual(['2026-09-01', '2026-09-02', '2026-09-03']);
+    expect(result.map((t) => t.due_date)).toEqual([
+  '2026-09-01T13:00:00',
+  '2026-09-02T13:00:00',
+  '2026-09-03T13:00:00',
+]);
   });
 });
 

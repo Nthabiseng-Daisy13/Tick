@@ -5,7 +5,7 @@
 ## Install
 
 ```bash
-git clone <PASTE YOUR REPO URL HERE>
+git clone https://github.com/Nthabiseng-Daisy13/Tick.git
 cd tick
 npm install
 ```
@@ -16,8 +16,7 @@ npm install
 npm run migrate
 ```
 
-This creates `data/todo.db` and applies the schema. Safe to run again later —
-it will not overwrite existing data.
+This command creates `data/todo.db` (if it does not already exist) and applies the database schema. It is safe to run multiple times and will not overwrite existing task data.
 
 ## Run (development)
 
@@ -25,7 +24,7 @@ it will not overwrite existing data.
 npm run dev
 ```
 
-Visit `http://localhost:3000`.
+Once the development server has started, open **http://localhost:3000** in your web browser.
 
 ## Build (production)
 
@@ -40,9 +39,8 @@ npm start
 npm test
 ```
 
-Tests run against a separate, throwaway SQLite file and do not touch
-`data/todo.db`.
+The test suite runs against a separate temporary SQLite database and does not modify `data/todo.db`.
 
+---
 
-
-[This document was written with the assistance of Claude Web Sonnet 5 ]
+*This document was prepared with the assistance of Claude Web (Sonnet 5) and ChatGPT (GPT-5.5). The final content was reviewed and verified by the author.*

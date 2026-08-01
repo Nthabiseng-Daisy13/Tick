@@ -32,7 +32,7 @@ describe('TaskForm — create mode', () => {
     expect(onSubmit).toHaveBeenCalledWith({
       title: 'Buy milk',
       description: '',
-      due_date: '2026-09-15',
+      due_date: '2026-09-15T13:00:00',
       topic: 'Errands',
       status: 'Todo',
     });

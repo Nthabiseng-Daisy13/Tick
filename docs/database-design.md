@@ -111,4 +111,4 @@ on a single row in the `tasks` table, which is sufficient for the application's
 requirements as specified.
 
 
-[This document was written with the assistance of Claude Web Sonnet 5 ]
+*This document was prepared with the assistance of Claude Web (Sonnet 5) and ChatGPT (GPT-5.5). The final content was reviewed and verified by the author.*

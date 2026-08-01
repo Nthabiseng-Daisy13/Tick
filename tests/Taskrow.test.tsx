@@ -35,7 +35,11 @@ describe('TaskRow', () => {
     expect(screen.getByText('Sample task')).toBeInTheDocument();
     expect(screen.getByText('Sample description')).toBeInTheDocument();
     expect(screen.getByText('Work')).toBeInTheDocument();
-    expect(screen.getByText(/Due 2026-09-01/)).toBeInTheDocument();
+    expect(screen.getByText(/Due/i)).toBeInTheDocument();
+
+expect(screen.getByText(/01 Sept 2026/i)).toBeInTheDocument();
+
+expect(screen.getByText(/02:00/i)).toBeInTheDocument();
   });
 
   it('shows the Overdue flag when is_overdue is true', () => {

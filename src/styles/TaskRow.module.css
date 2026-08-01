@@ -2,19 +2,25 @@
 
 .card {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
+  align-items: center;
   gap: 1rem;
+
   padding: 1.1rem 1.25rem;
+  margin-bottom: 0.85rem;
+
   background: var(--surface);
   border-radius: var(--radius);
-  margin-bottom: 0.85rem;
   box-shadow: 0 1px 3px rgba(122, 46, 77, 0.08);
+
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .main {
   flex: 1;
   min-width: 0;
+
+  display: flex;
+  flex-direction: column;
 }
 
 .titleLine {
@@ -27,6 +33,12 @@
 .title {
   font-weight: 600;
   font-size: 1rem;
+  color: var(--text);
+}
+
+.completedTitle {
+  text-decoration: line-through;
+  color: #5d7c53;
 }
 
 .overdueFlag {
@@ -34,8 +46,10 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.03em;
+
   color: var(--overdue);
   background: var(--overdue-bg);
+
   border-radius: 999px;
   padding: 0.15rem 0.55rem;
 }
@@ -52,27 +66,88 @@
   color: var(--muted);
 }
 
+.metaItem {
+  display: inline-block;
+}
+
 .metaDivider {
   margin: 0 0.4rem;
 }
+
+/* ---------- Left Checkbox ---------- */
+
+.completeButton {
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+  border: 2px solid #b0b0b0;
+
+  background: #fff;
+  color: white;
+
+  cursor: pointer;
+
+  flex-shrink: 0;
+
+  transition: all 0.2s ease;
+}
+
+.completeButton:hover {
+  border-color: #6ab04c;
+}
+
+.completed {
+  background: #6ab04c;
+  border-color: #6ab04c;
+  color: white;
+}
+
+.completed:hover {
+  background: #5fa545;
+}
+
+/* ---------- Completed Card ---------- */
+
+.completedCard {
+  background: #d0f0c0;
+  border: 1px solid #b8dfaa;
+}
+
+.completedCard .description,
+.completedCard .meta {
+  opacity: 0.75;
+}
+
+/* ---------- Right Actions ---------- */
 
 .actions {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+
   flex-shrink: 0;
 }
 
 .statusSelect {
   font-size: 0.75rem;
   font-weight: 600;
+
   padding: 0.35rem 0.7rem;
+
   border: none;
   border-radius: 999px;
+
   appearance: none;
   -webkit-appearance: none;
-  text-align: center;
+
   cursor: pointer;
+  text-align: center;
 }
 
 .status-Todo {
@@ -93,10 +168,17 @@
 .iconButton {
   background: none;
   border: none;
+
   font-size: 0.78rem;
   color: var(--muted);
-  padding: 0.3rem 0.4rem;
+
+  padding: 0.35rem 0.45rem;
+
   border-radius: var(--radius-sm);
+
+  cursor: pointer;
+
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 .iconButton:hover {
@@ -104,14 +186,16 @@
   color: var(--todo-ink);
 }
 
+/* ---------- Mobile ---------- */
+
 @media (max-width: 600px) {
   .card {
-    flex-direction: column;
+    align-items: flex-start;
   }
 
   .actions {
-    width: 100%;
-    justify-content: flex-start;
+    margin-left: auto;
     flex-wrap: wrap;
+    justify-content: flex-end;
   }
 }

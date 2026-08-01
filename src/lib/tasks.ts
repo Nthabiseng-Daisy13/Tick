@@ -56,6 +56,12 @@ export function createTask(data: TaskInput): TaskWithOverdue {
     if(!data.topic || !data.topic.trim()){
         throw new Error('Topic is required');
     }
+    let dueDate = data.due_date;
+
+    // If only a date is supplied, default to 13:00
+    if (!dueDate.includes('T')) {
+        dueDate += 'T13:00:00';
+    }
     if (data.status && !isValidStatus(data.status)) {
         throw new Error(`Invalid status: ${data.status}`);
     }
@@ -67,7 +73,7 @@ export function createTask(data: TaskInput): TaskWithOverdue {
     const result = query.run({
         title: data.title.trim(),
         description: data.description ?? null,
-        due_date: data.due_date,
+        due_date: dueDate,
         topic: data.topic.trim(),
         status: data.status ?? 'Todo',
         });
@@ -96,7 +102,11 @@ export function updateTask(id: number, data: Partial<TaskInput>): TaskWithOverdu
   if (data.status !== undefined && !isValidStatus(data.status)) {
     throw new Error(`Invalid status: ${data.status}`);
   }
- 
+ let dueDate = data.due_date;
+
+  if (dueDate && !dueDate.includes('T')) {
+      dueDate += 'T13:00:00';
+  }
   const db = getDb();
   const stmt = db.prepare(`
     UPDATE tasks
@@ -113,7 +123,7 @@ export function updateTask(id: number, data: Partial<TaskInput>): TaskWithOverdu
     id,
     title: data.title !== undefined ? data.title.trim() : existing.title,
     description: data.description !== undefined ? data.description : existing.description,
-    due_date: data.due_date !== undefined ? data.due_date : existing.due_date,
+    due_date: dueDate !== undefined? dueDate: existing.due_date,
     topic: data.topic !== undefined ? data.topic.trim() : existing.topic,
     status: data.status !== undefined ? data.status : existing.status,
   });

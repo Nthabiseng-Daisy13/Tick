@@ -24,6 +24,16 @@ interface TaskFormProps {
 const STATUS_OPTIONS: TaskStatus[] = ['Todo', 'In-Progress', 'Complete'];
 // Split the stored datetime into date and time
 
+// Format a Date using its LOCAL year/month/day — never toISOString(),
+// which converts to UTC first and can shift the date back a day for
+// any timezone ahead of UTC (e.g. SAST, UTC+2).
+function toLocalDateString(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 export function TaskForm({ initialTask, onSubmit, onCancel }: TaskFormProps) {
   const initialDate = initialTask?.due_date
   ? initialTask.due_date.split('T')[0]
@@ -35,7 +45,16 @@ export function TaskForm({ initialTask, onSubmit, onCancel }: TaskFormProps) {
   const [title, setTitle] = useState(initialTask?.title ?? '');
   const [description, setDescription] = useState(initialTask?.description ?? '');
   const [dueDate, setDueDate] = useState<Date | null>(
-  initialDate ? new Date(initialDate) : null
+  // Parse as local date parts, not `new Date(initialDate)` — passing a
+  // bare "YYYY-MM-DD" string to the Date constructor parses it as UTC
+  // midnight, which can also shift a day in either direction depending
+  // on the browser's timezone offset.
+  initialDate
+    ? (() => {
+        const [y, m, d] = initialDate.split('-').map(Number);
+        return new Date(y, m - 1, d);
+      })()
+    : null
 );
   const [dueTime, setDueTime] = useState(initialTime);
   const [topic, setTopic] = useState(initialTask?.topic ?? '');
@@ -57,8 +76,8 @@ export function TaskForm({ initialTask, onSubmit, onCancel }: TaskFormProps) {
       title: title.trim(),
       description: description.trim(),
       due_date: dueDate
-  ? `${dueDate.toISOString().split("T")[0]}T${dueTime || "13:00"}:00`
-  : "",
+        ? `${toLocalDateString(dueDate)}T${dueTime || "13:00"}:00`
+        : "",
       topic: topic.trim(),
       status,
     });

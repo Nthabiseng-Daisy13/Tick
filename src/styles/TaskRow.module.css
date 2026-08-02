@@ -111,7 +111,9 @@
 .completed:hover {
   background: #5fa545;
 }
-
+.completeButton-Todo { background-color: #ffffff; border: 1px solid #ccc; }
+.completeButton-In-Progress { background-color: #f5a623; border: none; }
+.completeButton-Complete { background-color: #2ecc71; border: none; }
 /* ---------- Completed Card ---------- */
 
 .completedCard {
@@ -121,6 +123,18 @@
 
 .completedCard .description,
 .completedCard .meta {
+  opacity: 0.75;
+}
+
+/* ---------- In-Progress Card ---------- */
+
+.inProgressCard {
+  background: #fde3c2;
+  border: 1px solid #f5c789;
+}
+
+.inProgressCard .description,
+.inProgressCard .meta {
   opacity: 0.75;
 }
 

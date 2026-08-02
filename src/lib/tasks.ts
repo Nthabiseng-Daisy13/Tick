@@ -45,7 +45,6 @@ function attachOverdue(task:Task):TaskWithOverdue{
 }
 
 export function createTask(data: TaskInput): TaskWithOverdue {
-  // TODO: validate + insert into SQLite
     if(!data.title || !data.title.trim()){
         throw new Error('Title is required');
     }
@@ -110,6 +109,9 @@ export function updateTask(id: number, data: Partial<TaskInput>): TaskWithOverdu
   // ternary expression for the type checker to potentially fail to narrow.
   let dueDate: string = existing.due_date;
   if (data.due_date !== undefined) {
+    if (!data.due_date) {
+      throw new Error('Due Date is required');
+    }
     dueDate = data.due_date;
     if (!dueDate.includes('T')) {
       dueDate += 'T13:00:00';
@@ -118,6 +120,9 @@ export function updateTask(id: number, data: Partial<TaskInput>): TaskWithOverdu
 
   let title: string = existing.title;
   if (data.title !== undefined) {
+    if (!data.title.trim()) {
+      throw new Error('Title is required');
+    }
     title = data.title.trim();
   }
 
@@ -128,6 +133,9 @@ export function updateTask(id: number, data: Partial<TaskInput>): TaskWithOverdu
 
   let topic: string = existing.topic;
   if (data.topic !== undefined) {
+    if (!data.topic.trim()) {
+      throw new Error('Topic is required');
+    }
     topic = data.topic.trim();
   }
 
@@ -200,7 +208,9 @@ export function listTasks(opts: ListTasksOptions = {}): TaskWithOverdue[] {
   const sortColumn: SortableColumn = isSortableColumn(opts.sort) ? opts.sort : 'due_date';
   const direction = opts.direction === 'desc' ? 'DESC' : 'ASC';
  
-  const whereClause = opts.includeArchived ? '' : 'WHERE archived_at IS NULL';
+  const whereClause = opts.includeArchived
+    ? 'WHERE archived_at IS NOT NULL'
+    : 'WHERE archived_at IS NULL';
  
   // sortColumn/direction come only from the whitelist above, never raw
   // user input, so this string build is safe from SQL injection.
@@ -264,4 +274,3 @@ export function getStats(): TaskStats {
     byTopic: topicRows,
   };
 }
- 

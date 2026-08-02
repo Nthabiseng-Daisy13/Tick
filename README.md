@@ -31,7 +31,7 @@ Clone the repository:
 
 ```bash
 git clone https://github.com/Nthabiseng-Daisy13/Tick.git
-cd tick
+cd Tick
 ```
 
 Install dependencies:

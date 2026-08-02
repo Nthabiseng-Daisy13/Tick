@@ -4,6 +4,7 @@
 
 import { useEffect, useState } from 'react';
 import type { TaskStats } from '@/lib/tasks';
+import { PageHeader } from '@/components/PageHeader';
 import styles from '@/styles/Stats.module.css';
 
 export default function StatsPage() {
@@ -20,11 +21,16 @@ export default function StatsPage() {
   }, []);
 
   if (loading || !stats) {
-    return <p className={styles.empty}>Loading statistics…</p>;
+    return
+    <div>
+      <PageHeader title="Statistics" />
+      <p className={styles.empty}>Loading statistics…</p>;
+    </div>
   }
 
   return (
     <div>
+      <PageHeader title="Statistics" />
       <h2 className={styles.heading}>Statistics</h2>
 
       <div className={styles.cardGrid}>

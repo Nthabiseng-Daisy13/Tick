@@ -36,7 +36,7 @@ CREATE INDEX idx_tasks_archived  ON tasks(archived_at);
 | `id` | INTEGER | Primary key, auto-incrementing |
 | `title` | TEXT | Required |
 | `description` | TEXT | Optional |
-| `due_date` | TEXT | Required. ISO 8601 date string |
+| `due_date` | TEXT | Required. ISO 8601 date/time string — see "Due date and time" below |
 | `topic` | TEXT | Required. Free text — see rationale below |
 | `status` | TEXT | Required. Constrained to `'Todo'`, `'In-Progress'`, `'Complete'` |
 | `archived_at` | TEXT | Nullable. `NULL` = active, timestamp = archived |
@@ -74,6 +74,16 @@ distinguishing a task archived because it was finished from one archived
 because it was abandoned) rather than collapsing that distinction by forcing
 a status change on archive.
 
+### Due date and time
+
+`due_date` stores a full ISO 8601 date/time string, not a date-only value. If
+a task is created or edited with only a date supplied (no time component), a
+default time of `13:00:00` is applied before the value is stored. This keeps
+`due_date` as a single column with a single comparable format, rather than
+splitting date and time across two columns — `isOverdue()` continues to
+compare `due_date` against the current timestamp with no special-casing
+needed for date-only vs. date-with-time values.
+
 ### "Overdue" is not stored anywhere
 
 Overdue is not a column and not a fourth status. It is computed at read time
@@ -110,5 +120,6 @@ There are no foreign-key relationships in this schema — all task data lives
 on a single row in the `tasks` table, which is sufficient for the application's
 requirements as specified.
 
+---
 
 *This document was prepared with the assistance of Claude Web (Sonnet 5) and ChatGPT (GPT-5.5). The final content was reviewed and verified by the author.*

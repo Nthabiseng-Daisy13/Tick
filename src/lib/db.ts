@@ -1,15 +1,9 @@
-// src/lib/db.ts
-//
-// SQLite connection singleton. The DB file path is controlled by
-// DB_PATH so tests can point this at a throwaway file instead of the
-// real application database.
-
-import Database from 'better-sqlite3';
+import { DatabaseSync } from 'node:sqlite';
 import path from 'path';
 import fs from 'fs';
-
-let db: Database.Database | null = null;
-
+ 
+let db: DatabaseSync | null = null;
+ 
 function resolveDbPath(): string {
   if (process.env.DB_PATH) {
     return process.env.DB_PATH;
@@ -20,17 +14,17 @@ function resolveDbPath(): string {
   }
   return path.join(dataDir, 'todo.db');
 }
-
-export function getDb(): Database.Database {
+ 
+export function getDb(): DatabaseSync {
   if (!db) {
     const dbPath = resolveDbPath();
-    db = new Database(dbPath);
-    db.pragma('journal_mode = WAL');
-    db.pragma('foreign_keys = ON');
+    db = new DatabaseSync(dbPath);
+    db.exec('PRAGMA journal_mode = WAL');
+    db.exec('PRAGMA foreign_keys = ON');
   }
   return db;
 }
-
+ 
 // Used by tests to force a fresh connection after swapping DB_PATH.
 export function resetDbConnection(): void {
   if (db) {

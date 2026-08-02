@@ -1,3 +1,4 @@
+// @vitest-environment node
 // tests/tasks.test.ts
 //
 // Runs against a fresh, throwaway SQLite file per test — never the real

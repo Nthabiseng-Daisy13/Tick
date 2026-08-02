@@ -78,7 +78,7 @@ export function createTask(data: TaskInput): TaskWithOverdue {
         status: data.status ?? 'Todo',
         });
 
-    const created = getTaskById(result.lastInsertRowid as number);
+    const created = getTaskById(Number(result.lastInsertRowid));
     if (!created) {
         throw new Error('Failed to load task after creation');
     }
@@ -102,11 +102,40 @@ export function updateTask(id: number, data: Partial<TaskInput>): TaskWithOverdu
   if (data.status !== undefined && !isValidStatus(data.status)) {
     throw new Error(`Invalid status: ${data.status}`);
   }
- let dueDate = data.due_date;
 
-  if (dueDate && !dueDate.includes('T')) {
+  // Start each value at its existing default, then conditionally overwrite
+  // in a separate statement (not a ternary). This shape narrows reliably
+  // regardless of TypeScript config quirks — the assignment and the
+  // "was it provided?" check are two separate statements, so there's no
+  // ternary expression for the type checker to potentially fail to narrow.
+  let dueDate: string = existing.due_date;
+  if (data.due_date !== undefined) {
+    dueDate = data.due_date;
+    if (!dueDate.includes('T')) {
       dueDate += 'T13:00:00';
+    }
   }
+
+  let title: string = existing.title;
+  if (data.title !== undefined) {
+    title = data.title.trim();
+  }
+
+  let description: string | null = existing.description ?? null;
+  if (data.description !== undefined) {
+    description = data.description;
+  }
+
+  let topic: string = existing.topic;
+  if (data.topic !== undefined) {
+    topic = data.topic.trim();
+  }
+
+  let status: TaskStatus = existing.status;
+  if (data.status !== undefined) {
+    status = data.status;
+  }
+
   const db = getDb();
   const stmt = db.prepare(`
     UPDATE tasks
@@ -118,23 +147,22 @@ export function updateTask(id: number, data: Partial<TaskInput>): TaskWithOverdu
         updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now')
     WHERE id = @id
   `);
- 
+
   stmt.run({
     id,
-    title: data.title !== undefined ? data.title.trim() : existing.title,
-    description: data.description !== undefined ? data.description : existing.description,
-    due_date: dueDate !== undefined? dueDate: existing.due_date,
-    topic: data.topic !== undefined ? data.topic.trim() : existing.topic,
-    status: data.status !== undefined ? data.status : existing.status,
+    title,
+    description,
+    due_date: dueDate,
+    topic,
+    status,
   });
- 
+
   const updated = getTaskById(id);
   if (!updated) {
     throw new Error('Failed to load task after update');
   }
   return updated;
 }
-
 // archiveTask — never deletes. Sets archived_at on the same row.
 
 export function archiveTask(id: number): TaskWithOverdue {
@@ -182,7 +210,7 @@ export function listTasks(opts: ListTasksOptions = {}): TaskWithOverdue[] {
     ORDER BY ${sortColumn} ${direction}
   `;
  
-  const rows = db.prepare(query).all() as Task[];
+  const rows = db.prepare(query).all() as unknown as Task[];
   return rows.map(attachOverdue);
 }
 

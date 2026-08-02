@@ -4,6 +4,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import type { TaskWithOverdue } from '@/lib/tasks';
+import { PageHeader } from '@/components/PageHeader';
 import styles from '@/styles/Calendar.module.css';
 
 const WEEKDAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -79,6 +80,7 @@ export default function CalendarPage() {
 
   return (
     <div>
+      <PageHeader title="Calendar" />
       <div className={styles.header}>
         <h2 className={styles.heading}>{monthLabel}</h2>
         <div className={styles.nav}>

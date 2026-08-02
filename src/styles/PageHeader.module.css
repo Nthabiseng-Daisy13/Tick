@@ -1,0 +1,12 @@
+/* src/styles/PageHeader.module.css */
+
+.wrapper {
+  margin-bottom: 1.5rem;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}

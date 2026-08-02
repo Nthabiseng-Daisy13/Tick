@@ -1,3 +1,4 @@
+// @vitest-environment node
 // tests/tasks.test.ts
 
 

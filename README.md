@@ -20,7 +20,7 @@ The application allows a single user to:
 
 ## Requirements
 
-- Node.js **v24.13.1**
+- Node.js **v22.14.0**
 - npm
 
 ---

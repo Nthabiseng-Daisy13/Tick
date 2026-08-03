@@ -115,13 +115,12 @@ Additional documentation is provided in the repository:
 - React
 - TypeScript
 - SQLite
-- better-sqlite3
 - Vitest
 - React Testing Library
 
 ---
 
-## Author
+## Author: Nthabiseng LefophanaS
 
 COMS3011A Software Design – Lab 1
 

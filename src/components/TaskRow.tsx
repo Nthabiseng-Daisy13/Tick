@@ -13,10 +13,31 @@ interface TaskRowProps {
 
 const STATUS_OPTIONS: TaskStatus[] = ['Todo', 'In-Progress', 'Complete'];
 
+// Click order for the round complete button: white -> orange -> green -> white...
+const STATUS_CYCLE: TaskStatus[] = ['Todo', 'In-Progress', 'Complete'];
+
+function nextStatus(current: TaskStatus): TaskStatus {
+  const idx = STATUS_CYCLE.indexOf(current);
+  return STATUS_CYCLE[(idx + 1) % STATUS_CYCLE.length];
+}
+
 function statusClass(status: TaskStatus): string {
   if (status === 'Todo') return styles['status-Todo'];
   if (status === 'In-Progress') return styles['status-In-Progress'];
   return styles['status-Complete'];
+}
+
+// Inline fallback colors so the button works even without extra CSS classes
+const STATUS_COLORS: Record<TaskStatus, string> = {
+  'Todo': '#ffffff',
+  'In-Progress': '#f5a623',
+  'Complete': '#2ecc71',
+};
+
+function statusButtonClass(status: TaskStatus): string {
+  if (status === 'Todo') return styles['completeButton-Todo'] ?? '';
+  if (status === 'In-Progress') return styles['completeButton-In-Progress'] ?? '';
+  return styles['completeButton-Complete'] ?? '';
 }
 
 export function TaskRow({
@@ -44,19 +65,15 @@ export function TaskRow({
     <div
     className={`${styles.card} ${
         task.status === "Complete" ? styles.completedCard : ""
-      }`}
+      } ${task.status === "In-Progress" ? styles.inProgressCard : ""}`}
     >
 
       <button
-        className={`${styles.completeButton} ${
-          task.status === "Complete" ? styles.completed : ""
-        }`}
-        onClick={() => {
-          if (task.status !== "Complete") {
-            onStatusChange(task.id, "Complete");
-          }
-        }}
-        aria-label={`Mark ${task.title} complete`}
+        className={`${styles.completeButton} ${statusButtonClass(task.status)}`}
+        style={{ backgroundColor: STATUS_COLORS[task.status] }}
+        onClick={() => onStatusChange(task.id, nextStatus(task.status))}
+        aria-label={`Cycle status for ${task.title} (currently ${task.status})`}
+        title={task.status}
       >
         {task.status === "Complete" ? "✓" : ""}
       </button>

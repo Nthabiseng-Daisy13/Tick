@@ -14,7 +14,7 @@ later version before continuing.
 
 ```bash
 git clone https://github.com/Nthabiseng-Daisy13/Tick.git
-cd tick
+cd Tick
 npm install
 ```
 

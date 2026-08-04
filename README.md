@@ -20,7 +20,7 @@ The application allows a single user to:
 
 ## Requirements
 
-- Node.js **v24.13.1**
+- Node.js **v22.14.0**
 - npm
 
 ---
@@ -31,7 +31,7 @@ Clone the repository:
 
 ```bash
 git clone https://github.com/Nthabiseng-Daisy13/Tick.git
-cd tick
+cd Tick
 ```
 
 Install dependencies:
@@ -115,13 +115,12 @@ Additional documentation is provided in the repository:
 - React
 - TypeScript
 - SQLite
-- better-sqlite3
 - Vitest
 - React Testing Library
 
 ---
 
-## Author
+## Author: Nthabiseng LefophanaS
 
 COMS3011A Software Design – Lab 1
 

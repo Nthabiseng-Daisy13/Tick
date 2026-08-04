@@ -3,6 +3,8 @@
 **Tool used:** Claude (Anthropic) Web Sonnet 5
 **Purpose:** Continuation of `01-project-planning.md`. Covers verifying the scaffold, building the database layer and business logic, writing tests, wiring the API, finishing documentation, and building the frontend (including a full design pivot to a pink/daisy theme) plus the Calendar and Statistics extensions.
 
+
+**Link to claude chat:** https://claude.ai/share/2f64b42c-bfa9-4dd2-9d58-8a83ac710979
 ---
 
 ## Exchange 5: Verifying the initial scaffold

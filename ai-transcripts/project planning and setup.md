@@ -3,6 +3,8 @@
 **Tool used:** Claude (Anthropic) Web Sonnet 5
 **Purpose:** Breaking down lab requirements, planning architecture, and scaffolding the Next.js/SQLite project structure.
 
+**Link to claude chat:** https://claude.ai/share/2f64b42c-bfa9-4dd2-9d58-8a83ac710979
+
 ---
 
 ## Exchange 1: Requirements breakdown and planning

@@ -2,6 +2,10 @@
 
 ## Session: Improving the Task Management Features
 
+**Tool used:** ChatGPT Web GPT-5.5
+
+**Link to chatgpt chat:** https://chatgpt.com/share/6a71b41a-5f14-83ea-9a2a-e0d6885c6177
+
 ### Prompt 1
 
 > I want to build the due time feature and implement it in creation of
@@ -245,3 +249,5 @@ several cases, I rejected or redirected AI-generated suggestions (for
 example, the initial task completion implementation and the feature
 suggestions beyond the assignment scope), and the final solution
 reflects those corrections rather than the AI's initial responses.
+
+*This document was prepared with the assistance of ChatGPT (GPT-5.5). The final content was reviewed and verified by the author.*
